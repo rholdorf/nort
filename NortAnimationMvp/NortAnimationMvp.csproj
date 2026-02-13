@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
+    <PackageReference Include="AssimpNet" Version="5.0.0-beta1" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <AssimpDylibPath Condition="Exists('/opt/homebrew/lib/libassimp.dylib')">/opt/homebrew/lib/libassimp.dylib</AssimpDylibPath>
+    <AssimpDylibPath Condition="'$(AssimpDylibPath)' == '' and Exists('/opt/homebrew/lib/libassimp.7.dylib')">/opt/homebrew/lib/libassimp.7.dylib</AssimpDylibPath>
+    <AssimpDylibPath Condition="'$(AssimpDylibPath)' == '' and Exists('/opt/homebrew/lib/libassimp.6.dylib')">/opt/homebrew/lib/libassimp.6.dylib</AssimpDylibPath>
+    <AssimpDylibPath Condition="'$(AssimpDylibPath)' == '' and Exists('/opt/homebrew/lib/libassimp.5.dylib')">/opt/homebrew/lib/libassimp.5.dylib</AssimpDylibPath>
+    <AssimpDylibPath Condition="'$(AssimpDylibPath)' == '' and Exists('/usr/local/lib/libassimp.dylib')">/usr/local/lib/libassimp.dylib</AssimpDylibPath>
+    <AssimpDylibPath Condition="'$(AssimpDylibPath)' == '' and Exists('/usr/local/lib/libassimp.7.dylib')">/usr/local/lib/libassimp.7.dylib</AssimpDylibPath>
+    <AssimpDylibPath Condition="'$(AssimpDylibPath)' == '' and Exists('/usr/local/lib/libassimp.6.dylib')">/usr/local/lib/libassimp.6.dylib</AssimpDylibPath>
+    <AssimpDylibPath Condition="'$(AssimpDylibPath)' == '' and Exists('/usr/local/lib/libassimp.5.dylib')">/usr/local/lib/libassimp.5.dylib</AssimpDylibPath>
+    <AssimpDylibPath Condition="'$(AssimpDylibPath)' == '' and Exists('/opt/homebrew/opt/assimp@5/lib/libassimp.dylib')">/opt/homebrew/opt/assimp@5/lib/libassimp.dylib</AssimpDylibPath>
+    <AssimpDylibPath Condition="'$(AssimpDylibPath)' == '' and Exists('/opt/homebrew/opt/assimp@5/lib/libassimp.5.dylib')">/opt/homebrew/opt/assimp@5/lib/libassimp.5.dylib</AssimpDylibPath>
+    <AssimpDylibPath Condition="'$(AssimpDylibPath)' == '' and Exists('/usr/local/opt/assimp@5/lib/libassimp.5.dylib')">/usr/local/opt/assimp@5/lib/libassimp.5.dylib</AssimpDylibPath>
+  </PropertyGroup>
+
+  <Target Name="CopyHomebrewAssimpDylib" AfterTargets="Build" Condition="'$(AssimpDylibPath)' != ''">
+    <Copy SourceFiles="$(AssimpDylibPath)" DestinationFiles="$(OutDir)libassimp.dylib" OverwriteReadOnlyFiles="true" />
+  </Target>
+</Project>
