@@ -30,10 +30,6 @@ public sealed class FbxRuntimeLoader
             throw new InvalidOperationException($"Falha ao importar modelo: {modelPath}");
         }
 
-#if DEBUG
-        Console.WriteLine($"[FBX] Imported {Path.GetFileName(modelPath)} | Materials={scene.MaterialCount} | EmbeddedTextures={scene.TextureCount}");
-#endif
-
         var skeleton = BuildSkeleton(scene);
         var meshParts = BuildMeshParts(
             graphicsDevice,
@@ -93,12 +89,6 @@ public sealed class FbxRuntimeLoader
                 "libassimp.6.dylib",
                 "libassimp.5.dylib");
         }
-
-#if DEBUG
-        var version = assimpLibrary.GetVersion();
-        Console.WriteLine($"[ASSIMP] Native library version in use: {version}");
-        Console.WriteLine($"[ASSIMP] Native library path: {assimpLibrary.LibraryPath ?? "(not loaded yet)"}");
-#endif
 
         _assimpNativeConfigured = true;
     }
@@ -269,11 +259,6 @@ public sealed class FbxRuntimeLoader
                 }
             }
 
-#if DEBUG
-            Console.WriteLine(
-                $"[SKIN] Mesh[{meshIndex}] verts={mesh.VertexCount} meshBones={mesh.BoneCount} matchedBones={matchedMeshBones} unmatchedBones={unmatchedMeshBones} weightEntries={weightEntryCount} positiveWeights={positiveWeightCount} maxWeight={maxWeight:0.####} usedBones={usedBones.Count} fallbackVerts={fallbackVertices}");
-#endif
-
             var remap = usedBones.OrderBy(x => x).ToArray();
             if (remap.Length == 0)
             {
@@ -342,9 +327,6 @@ public sealed class FbxRuntimeLoader
             var material = scene.Materials[materialIndex];
             if (!TryGetPrimaryTextureSlot(material, out var textureSlot, out var chosenType))
             {
-#if DEBUG
-                Console.WriteLine($"[FBX] Material[{materialIndex}] no diffuse/baseColor texture slot.");
-#endif
                 result[materialIndex] = null;
                 continue;
             }
@@ -353,11 +335,6 @@ public sealed class FbxRuntimeLoader
             var texture = TryLoadTexture(graphicsDevice, scene, modelDirectory, filePath, textureSlot.TextureIndex);
             result[materialIndex] = texture;
             loadedAny |= texture is not null;
-
-#if DEBUG
-            Console.WriteLine(
-                $"[FBX] Material[{materialIndex}] type={chosenType} slotPath='{filePath}' textureIndex={textureSlot.TextureIndex} loaded={(texture is not null ? "yes" : "no")}");
-#endif
         }
 
         if (!loadedAny)
@@ -370,9 +347,6 @@ public sealed class FbxRuntimeLoader
                     result[materialIndex] = fallbackTexture;
                 }
 
-#if DEBUG
-                Console.WriteLine($"[FBX] Fallback texture loaded from directory: {fallbackTexture.Name ?? "(unnamed)"}");
-#endif
             }
         }
 
@@ -779,15 +753,6 @@ public sealed class FbxRuntimeLoader
                 Scales = scales
             };
         }
-
-#if DEBUG
-        Console.WriteLine(
-            $"[ANIM] Clip '{clipName}' channels={animation.NodeAnimationChannelCount} matched={matchedChannels} unmatched={unmatchedChannels} duration={Math.Max(duration, 0.01f):0.###}s");
-        if (sampleUnmatched.Count > 0)
-        {
-            Console.WriteLine($"[ANIM] Unmatched sample: {string.Join(", ", sampleUnmatched)}");
-        }
-#endif
 
         return new AnimationClip
         {

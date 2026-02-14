@@ -24,12 +24,13 @@ public sealed class GameRoot : Game
     private RasterizerState _modelRasterizerState = RasterizerState.CullCounterClockwise;
 
     private KeyboardState _previousKeyboard;
-    private MouseState _previousMouse;
+    private int _previousScrollWheelValue;
 
     private Vector3 _cameraPosition = new(0f, 1.25f, 3.5f);
     private float _cameraYaw = MathF.PI;
     private float _cameraPitch = -0.05f;
     private float _cameraFovDegrees = 60f;
+    private bool _isMaximizedWindow;
 
     private const float CameraMoveSpeed = 2.8f;
     private const float CameraFastMultiplier = 2.5f;
@@ -47,15 +48,19 @@ public sealed class GameRoot : Game
         };
 
         IsMouseVisible = false;
-        Window.Title = "MonoGame Mixamo MVP - 1:Idle 2:Walk 3:Run 4:Bash | WASD+Mouse+Scroll";
+        Window.Title = "MonoGame Mixamo MVP - 1:Idle 2:Walk 3:Run 4:Bash | WASD+Mouse+Scroll | F10 Max/Restore | F11 Fullscreen";
     }
 
     protected override void Initialize()
     {
+        Window.AllowUserResizing = true;
+        Window.ClientSizeChanged += (_, _) => RebuildProjectionMatrix();
+
         RebuildViewMatrix();
         RebuildProjectionMatrix();
 
-        _previousMouse = Mouse.GetState();
+        _previousScrollWheelValue = Mouse.GetState().ScrollWheelValue;
+        CenterMouseInWindow();
         base.Initialize();
     }
 
@@ -99,6 +104,31 @@ public sealed class GameRoot : Game
             Exit();
         }
 
+        if (keyboard.IsKeyDown(Keys.F11) && !_previousKeyboard.IsKeyDown(Keys.F11))
+        {
+            _graphics.ToggleFullScreen();
+            RebuildProjectionMatrix();
+        }
+
+        if (keyboard.IsKeyDown(Keys.F10) && !_previousKeyboard.IsKeyDown(Keys.F10))
+        {
+            _isMaximizedWindow = !_isMaximizedWindow;
+            if (_isMaximizedWindow)
+            {
+                _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                _graphics.ApplyChanges();
+            }
+            else
+            {
+                _graphics.PreferredBackBufferWidth = 1280;
+                _graphics.PreferredBackBufferHeight = 720;
+                _graphics.ApplyChanges();
+            }
+
+            RebuildProjectionMatrix();
+        }
+
         TriggerTransition(keyboard, Keys.D1, "idle");
         TriggerTransition(keyboard, Keys.D2, "walk");
         TriggerTransition(keyboard, Keys.D3, "run");
@@ -108,7 +138,6 @@ public sealed class GameRoot : Game
         _animator.Update(deltaTime);
 
         _previousKeyboard = keyboard;
-        _previousMouse = mouse;
         base.Update(gameTime);
     }
 
@@ -151,8 +180,11 @@ public sealed class GameRoot : Game
 
     private void UpdateCamera(float deltaTime, KeyboardState keyboard, MouseState mouse)
     {
-        var deltaX = mouse.X - _previousMouse.X;
-        var deltaY = mouse.Y - _previousMouse.Y;
+        var centerX = Window.ClientBounds.Width / 2;
+        var centerY = Window.ClientBounds.Height / 2;
+
+        var deltaX = IsActive ? mouse.X - centerX : 0;
+        var deltaY = IsActive ? mouse.Y - centerY : 0;
 
         _cameraYaw -= deltaX * MouseLookSensitivity;
         _cameraPitch -= deltaY * MouseLookSensitivity;
@@ -168,7 +200,8 @@ public sealed class GameRoot : Game
             _cameraYaw -= KeyboardTurnSpeed * deltaTime;
         }
 
-        var scrollDelta = mouse.ScrollWheelValue - _previousMouse.ScrollWheelValue;
+        var scrollDelta = mouse.ScrollWheelValue - _previousScrollWheelValue;
+        _previousScrollWheelValue = mouse.ScrollWheelValue;
         if (scrollDelta != 0)
         {
             _cameraFovDegrees -= (scrollDelta / 120f) * ZoomStepDegrees;
@@ -203,7 +236,17 @@ public sealed class GameRoot : Game
             _cameraPosition += move * speed * deltaTime;
         }
 
+        if (IsActive)
+        {
+            Mouse.SetPosition(centerX, centerY);
+        }
+
         RebuildViewMatrix();
+    }
+
+    private void CenterMouseInWindow()
+    {
+        Mouse.SetPosition(Window.ClientBounds.Width / 2, Window.ClientBounds.Height / 2);
     }
 
     private void RebuildViewMatrix()

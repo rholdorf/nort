@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug NortAnimationMvp",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "dotnet: build solution",
+      "program": "${workspaceFolder}/NortAnimationMvp/bin/Debug/net8.0/NortAnimationMvp.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/NortAnimationMvp",
+      "stopAtEntry": false,
+      "console": "internalConsole"
+    }
+  ]
+}
