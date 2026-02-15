@@ -56,6 +56,7 @@ public sealed class GameRoot : Game
         Window.AllowUserResizing = true;
         Window.ClientSizeChanged += (_, _) => RebuildProjectionMatrix();
 
+        LookAtWorldTarget(Vector3.Zero);
         RebuildViewMatrix();
         RebuildProjectionMatrix();
 
@@ -67,17 +68,17 @@ public sealed class GameRoot : Game
     protected override void LoadContent()
     {
         var modelsDir = ResolveModelsDirectory();
-        var loader = new FbxRuntimeLoader();
-        var modelPath = Path.Combine(modelsDir, "y-bot.fbx");
+        var loader = new GlbRuntimeLoader();
+        var modelPath = Path.Combine(modelsDir, "y-bot.glb");
         var animationSet = loader.Load(
             GraphicsDevice,
             modelPath,
             new Dictionary<string, string>
             {
-                ["idle"] = Path.Combine(modelsDir, "idle.fbx"),
-                ["walk"] = Path.Combine(modelsDir, "walk.fbx"),
-                ["run"] = Path.Combine(modelsDir, "run.fbx"),
-                ["bash"] = Path.Combine(modelsDir, "bash.fbx")
+                ["idle"] = Path.Combine(modelsDir, "idle.glb"),
+                ["walk"] = Path.Combine(modelsDir, "walking.glb"),
+                ["run"] = Path.Combine(modelsDir, "running.glb"),
+                ["bash"] = Path.Combine(modelsDir, "punching.glb")
             });
         
         _animator = new Animator(animationSet.Model.Skeleton, animationSet.Clips);
@@ -257,6 +258,20 @@ public sealed class GameRoot : Game
         _view = Matrix.CreateLookAt(_cameraPosition, _cameraPosition + forward, up);
     }
 
+    private void LookAtWorldTarget(Vector3 target)
+    {
+        var direction = target - _cameraPosition;
+        if (direction.LengthSquared() < 0.000001f)
+        {
+            return;
+        }
+
+        direction.Normalize();
+        _cameraYaw = MathF.Atan2(direction.X, -direction.Z);
+        _cameraPitch = MathF.Asin(MathHelper.Clamp(direction.Y, -1f, 1f));
+        _cameraPitch = MathHelper.Clamp(_cameraPitch, -1.45f, 1.45f);
+    }
+
     private void RebuildProjectionMatrix()
     {
         _projection = Matrix.CreatePerspectiveFieldOfView(
@@ -270,8 +285,8 @@ public sealed class GameRoot : Game
     {
         var candidates = new[]
         {
-            Path.Combine(AppContext.BaseDirectory, "../../../../mixamo_models"),
-            Path.Combine(Directory.GetCurrentDirectory(), "mixamo_models")
+            Path.Combine(AppContext.BaseDirectory, "../../../../glb_models"),
+            Path.Combine(Directory.GetCurrentDirectory(), "glb_models")
         };
 
         foreach (var candidate in candidates)

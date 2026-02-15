@@ -8,12 +8,12 @@ MVP de runtime animation layer com:
 - conversão local -> model/global -> skin palette
 - GPU skinning com `SkinnedEffect`
 - bone remap por submesh (`SkinnedMeshPart.BoneRemap`)
-- textura difusa por material (FBX embutida/external, fallback branco)
+- textura difusa por material GLB (embutida/external, fallback branco)
 - fundo `CornflowerBlue` e chão quadriculado (linhas 1m)
 
 ## Estrutura
 
-- `Assets/FbxRuntimeLoader.cs`: importa FBX de modelo + FBX de animações
+- `Assets/GlbRuntimeLoader.cs`: importa GLB de modelo (T-pose) + GLB de animações
 - `Runtime/*`: formato runtime-friendly (skeleton, meshpart, clips)
 - `Animation/Animator.cs`: sample, blend, geração de skin matrices
 - `Rendering/SkinnedMeshRenderer.cs`: upload da palette e draw
@@ -37,32 +37,7 @@ MVP de runtime animation layer com:
 
 ### Pré-requisito (macOS)
 
-O projeto usa `AssimpNet` e no macOS é necessário ter o `assimp` instalado via Homebrew:
-
-```bash
-brew install assimp
-```
-
-O build copia automaticamente a lib do Homebrew para o output como `libassimp.dylib`, priorizando instalações atuais e tentando, nesta ordem:
-
-- `/opt/homebrew/lib/libassimp.dylib`
-- `/opt/homebrew/lib/libassimp.7.dylib`
-- `/opt/homebrew/lib/libassimp.6.dylib`
-- `/opt/homebrew/lib/libassimp.5.dylib`
-- `/usr/local/lib/libassimp.dylib`
-- `/usr/local/lib/libassimp.7.dylib`
-- `/usr/local/lib/libassimp.6.dylib`
-- `/usr/local/lib/libassimp.5.dylib`
-
-Fallback legado (opcional), caso você ainda use fórmula versionada:
-
-```bash
-brew install assimp@5
-```
-
-Também é suportado:
-- Apple Silicon: `/opt/homebrew/opt/assimp@5/lib/libassimp.5.dylib`
-- Intel: `/usr/local/opt/assimp@5/lib/libassimp.5.dylib`
+Nenhum requisito de Assimp/FBX. O runtime lê GLB diretamente.
 
 No diretório raiz:
 
