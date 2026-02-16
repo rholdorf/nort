@@ -11,7 +11,7 @@ MVP de runtime animation layer com:
 - textura difusa por material GLB (embutida/external, fallback branco)
 - fundo `CornflowerBlue` e chão quadriculado (linhas 1m)
 
-![screenshot](../screenshot.png)
+![screenshot](screenshot.png)
 
 ## Estrutura
 
