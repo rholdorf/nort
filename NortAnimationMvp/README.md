@@ -11,9 +11,12 @@ MVP de runtime animation layer com:
 - textura difusa por material GLB (embutida/external, fallback branco)
 - fundo `CornflowerBlue` e chão quadriculado (linhas 1m)
 
+![screenshot](../screenshot.png)
+
 ## Estrutura
 
 - `Assets/GlbRuntimeLoader.cs`: importa GLB de modelo (T-pose) + GLB de animações
+  - modelos *raw* foram convertidos do [mixamo](https://www.mixamo.com/) usando o script [m2g](https://github.com/rholdorf/m2g).
 - `Runtime/*`: formato runtime-friendly (skeleton, meshpart, clips)
 - `Animation/Animator.cs`: sample, blend, geração de skin matrices
 - `Rendering/SkinnedMeshRenderer.cs`: upload da palette e draw

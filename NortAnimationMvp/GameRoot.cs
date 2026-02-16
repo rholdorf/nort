@@ -69,7 +69,7 @@ public sealed class GameRoot : Game
     {
         var modelsDir = ResolveModelsDirectory();
         var loader = new GlbRuntimeLoader();
-        var modelPath = Path.Combine(modelsDir, "y-bot.glb");
+        var modelPath = Path.Combine(modelsDir, "/Users/rui/src/pg/m2g/output/maria_wprop_j_k_ong.glb");
         var animationSet = loader.Load(
             GraphicsDevice,
             modelPath,
@@ -78,7 +78,12 @@ public sealed class GameRoot : Game
                 ["idle"] = Path.Combine(modelsDir, "idle.glb"),
                 ["walk"] = Path.Combine(modelsDir, "walking.glb"),
                 ["run"] = Path.Combine(modelsDir, "running.glb"),
-                ["bash"] = Path.Combine(modelsDir, "punching.glb")
+                ["bash"] = Path.Combine(modelsDir, "punching.glb"),
+                ["catwalk_walk_forward"] = Path.Combine(modelsDir, "catwalk_walk_forward.glb"),
+                ["dying"] = Path.Combine(modelsDir, "dying.glb"),
+                ["look_around"] = Path.Combine(modelsDir, "look_around.glb"),
+                ["ninja_idle"] = Path.Combine(modelsDir, "ninja_idle.glb"),
+                ["offensive_idle"] = Path.Combine(modelsDir, "offensive_idle.glb")
             });
         
         _animator = new Animator(animationSet.Model.Skeleton, animationSet.Clips);
@@ -134,6 +139,13 @@ public sealed class GameRoot : Game
         TriggerTransition(keyboard, Keys.D2, "walk");
         TriggerTransition(keyboard, Keys.D3, "run");
         TriggerTransition(keyboard, Keys.D4, "bash");
+        TriggerTransition(keyboard, Keys.D5, "catwalk_walk_forward");
+        TriggerTransition(keyboard, Keys.D6, "dying");
+        TriggerTransition(keyboard, Keys.D7, "look_around");
+        TriggerTransition(keyboard, Keys.D8, "ninja_idle");
+        TriggerTransition(keyboard, Keys.D9, "offensive_idle");
+
+
 
         UpdateCamera(deltaTime, keyboard, mouse);
         _animator.Update(deltaTime);
