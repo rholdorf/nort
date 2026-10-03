@@ -69,7 +69,7 @@ public sealed class GameRoot : Game
     {
         var modelsDir = ResolveModelsDirectory();
         var loader = new GlbRuntimeLoader();
-        var modelPath = Path.Combine(modelsDir, "/Users/rui/src/pg/m2g/output/maria_wprop_j_k_ong.glb");
+        var modelPath = Path.Combine(modelsDir, "/Users/rui/src/pg/m2g/output/x-bot.glb");
         var animationSet = loader.Load(
             GraphicsDevice,
             modelPath,

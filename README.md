@@ -10,7 +10,7 @@ MVP de runtime animation layer com:
 - bone remap por submesh (`SkinnedMeshPart.BoneRemap`)
 - textura difusa por material GLB (embutida/external, fallback branco)
 - fundo `CornflowerBlue` e chão quadriculado (linhas 1m)
-- modelos foram convertidos do [mixamo](https://www.mixamo.com/) *raw* usando o script [m2g](https://github.com/rholdorf/m2g).
+- modelos foram convertidos do [mixamo](https://www.mixamo.com/) FBX *raw* para GLB usando o script [m2g](https://github.com/rholdorf/m2g).
 
 ![screenshot](screenshot.png)
 
